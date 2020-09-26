@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.BackDao">
+
+    <resultMap id="BackMap" type="Back">
+        <result column="id" property="backId"></result>
+        <result column="medicine_id" property="medicineId"></result>
+
+        <association property="medicine" javaType="Medicine"
+                     column="medicine_id" select="com.weikang.dao.MedicineDao.queryById"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+
+    <!-- 分页 -->
+    <select id="fenYe" parameterType="Back" resultMap="BackMap">
+        select * from Back
+        <where>
+            <if test="status != null and status!=-1">and status = #{status}</if>
+            <if test="type != null and type!=-1">and type = #{type}</if>
+        </where>
+    </select>
+
+    <!-- 条数 -->
+    <select id="fenYeCount" parameterType="Back" resultType="int">
+        select count(*) from Back
+        <where>
+            <if test="status != null and status!=-1">and status = #{status}</if>
+            <if test="type != null and type!=-1">and type = #{type}</if>
+        </where>
+    </select>
+
+    <!-- 根据id查 -->
+    <select id="queryById" parameterType="int" resultMap="BackMap">
+		select * from Back where id=#{id}
+	</select>
+
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="int">
+        delete from Back where id in
+        <foreach collection="array" item="id" open="(" separator="," close=");">
+            #{id}
+        </foreach>
+
+    </delete>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="Back">
+        insert into Back values (null,#{type},#{medicineId},#{quantity},#{time},#{inspector},0)
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="Back">
+        update Back set type=#{type}, medicine_id=#{medicineId},quantity=#{quantity},time=#{time},inspector=#{inspector} where id = #{backId}
+    </update>
+
+    <!-- 修改 -->
+    <update id="update2" parameterType="int">
+        update Back set status=0 where id = #{id}
+    </update>
+    <update id="update3" parameterType="int">
+        update Back set status=1 where id = #{id}
+    </update>
+    <update id="update4" parameterType="int">
+        update Back set status=2 where id = #{id}
+    </update>
+
+</mapper>

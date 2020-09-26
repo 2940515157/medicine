@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.BackReportDao">
+
+    <resultMap id="BackReportMap" type="BackReport">
+        <result column="id" property="backReportId"></result>
+        <result column="back_id" property="backId"></result>
+
+        <association property="back" javaType="Back"
+                     column="back_id" select="com.weikang.dao.BackDao.queryById"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+
+    <!-- 分页 -->
+    <select id="fenYe" parameterType="BackReport" resultMap="BackReportMap">
+        select * from back_report
+    </select>
+
+    <!-- 条数 -->
+    <select id="fenYeCount" parameterType="BackReport" resultType="int">
+        select count(*) from back_report
+    </select>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="BackReport">
+        insert into back_report values (null,#{backId},#{time},#{sum});
+    </insert>
+
+
+</mapper>

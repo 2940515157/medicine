@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.ClientDao">
+
+	<resultMap id="clientMap" type="client">
+		<result column="id" property="clientId"></result>
+	</resultMap>
+
+	<!-- 分页 -->
+	<select id="fenYe" parameterType="Client" resultMap="clientMap">
+		select * from client
+		<where>
+			<if test="name != null and name!=''">and name like CONCAT('%',#{name},'%')</if>
+		</where>
+	</select>
+
+	<!-- 条数 -->
+	<select id="fenYeCount" parameterType="client" resultType="int">
+		select count(*) from client
+		<where>
+			<if test="name != null and name!=''">and name like CONCAT('%',#{name},'%')</if>
+		</where>
+	</select>
+
+	<!-- 根据id查 -->
+	<select id="queryById" parameterType="int" resultMap="clientMap">
+		select * from client where id=#{clientId}
+	</select>
+
+
+	<!-- 删除 -->
+	<delete id="delete" parameterType="int">
+        delete from client where id = #{clientId}
+    </delete>
+
+	<!-- 添加 -->
+	<insert id="add" parameterType="client">
+        insert into client values (null,#{name},#{sex},#{tel},#{address})
+    </insert>
+
+	<!-- 修改 -->
+	<update id="update" parameterType="client">
+        update client set name=#{name},sex=#{sex},tel=#{tel},address=#{address} where id = #{clientId}
+    </update>
+
+</mapper>

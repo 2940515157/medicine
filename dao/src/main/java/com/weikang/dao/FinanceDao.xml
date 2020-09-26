@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.FinanceDao">
+
+    <resultMap id="FinanceMap" type="Finance">
+        <result column="id" property="financeId"></result>
+
+    </resultMap>
+
+    <!-- 分页 -->
+    <select id="fenYe" parameterType="Finance" resultMap="FinanceMap">
+        select * from finance
+        <where>
+            <if test="starttime != null ">and time<![CDATA[>]]>#{starttime}</if>
+            <if test="endtime != null ">and time<![CDATA[<=]]>#{endtime}</if>
+        </where>
+    </select>
+
+    <!-- 条数 -->
+    <select id="fenYeCount" parameterType="Finance" resultType="int">
+        select count(*) from Finance
+        <where>
+        <if test="starttime != null ">and time<![CDATA[>]]>#{starttime}</if>
+        <if test="endtime != null ">and time<![CDATA[<=]]>#{endtime}</if>
+        </where>
+    </select>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="Finance">
+        insert into Finance values (null,#{remark},#{name},#{quantity},#{price},#{sum},#{time});
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.SellDao">
+
+    <resultMap id="SellMap" type="Sell">
+        <result column="id" property="sellId"></result>
+        <result column="medicine_id" property="medicineId"></result>
+        <result column="client_id" property="clientId"></result>
+
+        <association property="medicine" javaType="Medicine"
+                     column="medicine_id" select="com.weikang.dao.MedicineDao.queryById"
+                     fetchType="lazy">
+        </association>
+        <association property="client" javaType="Client"
+                     column="client_id" select="com.weikang.dao.ClientDao.queryById"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+
+    <!-- 分页 -->
+    <select id="fenYe" parameterType="Sell" resultMap="SellMap">
+        select * from Sell
+        <where>
+            <if test="seller != null and seller!='' ">and seller like CONCAT('%',#{seller},'%')</if>
+            <if test="status != null and status!=-1">and status = #{status}</if>
+        </where>
+    </select>
+
+    <!-- 条数 -->
+    <select id="fenYeCount" parameterType="Sell" resultType="int">
+        select count(*) from Sell
+        <where>
+            <if test="seller != null and seller!='' ">and seller like CONCAT('%',#{seller},'%')</if>
+            <if test="status != null and status!=-1">and status = #{status}</if>
+        </where>
+    </select>
+
+    <!-- 根据id查 -->
+    <select id="queryById" parameterType="int" resultMap="SellMap">
+		select * from Sell where id=#{id}
+	</select>
+
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="int">
+        delete from Sell where id in
+        <foreach collection="array" item="id" open="(" separator="," close=");">
+            #{id}
+        </foreach>
+
+    </delete>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="Sell">
+        insert into Sell values (null,#{medicineId},#{quantity},#{time},#{seller},#{clientId},0)
+
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="Sell">
+        update Sell set medicine_id=#{medicineId},quantity=#{quantity},time=#{time},seller=#{seller},client_id=#{clientId} where id = #{sellId}
+    </update>
+
+    <!-- 修改 -->
+    <update id="update2" parameterType="int">
+        update Sell set status=0 where id = #{id}
+    </update>
+    <update id="update3" parameterType="int">
+        update Sell set status=1 where id = #{id}
+    </update>
+    <update id="update4" parameterType="int">
+        update Sell set status=2 where id = #{id}
+    </update>
+
+</mapper>

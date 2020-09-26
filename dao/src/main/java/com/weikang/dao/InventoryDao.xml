@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.InventoryDao">
+
+	<resultMap id="InventoryMap" type="Inventory">
+		<result column="id" property="inventoryId"></result>
+		<result column="stock_id" property="stockId"></result>
+
+		<association property="stock" javaType="Stock"
+					 column="stock_id" select="com.weikang.dao.StockDao.queryById"
+					 fetchType="lazy">
+		</association>
+	</resultMap>
+
+	<!-- 分页 -->
+	<select id="fenYe" parameterType="Inventory" resultMap="InventoryMap">
+		select * from Inventory
+		<where>
+			<if test="name != null and name!=''">and name like CONCAT('%',#{name},'%')</if>
+			<if test="category != null and category !=''">and category like CONCAT('%',#{category},'%')</if>
+		</where>
+	</select>
+
+	<select id="addfenYe" parameterType="Medicine" resultMap="InventoryMap">
+		SELECT * FROM inventory
+		<where>
+			and id not in(SELECT inventory_id FROM medicine)
+			<if test="name != null and name!=''">and name like CONCAT('%',#{name},'%')</if>
+			<if test="category != null and category !=''">and category like CONCAT('%',#{category},'%')</if>
+		</where>
+	</select>
+	<!-- 条数 -->
+	<select id="fenYeCount" parameterType="Inventory" resultType="int">
+		select count(*) from Inventory
+		<where>
+			<if test="name != null and name!=''">and name like CONCAT('%',#{name},'%')</if>
+			<if test="category != null and category !=''">and category like CONCAT('%',#{category},'%')</if>
+		</where>
+	</select>
+
+	<select id="addfenYeCount" parameterType="Medicine" resultType="int">
+		select count(*) from inventory
+		<where>
+			and id not in(SELECT inventory_id FROM medicine)
+			<if test="name != null and name!=''">and name like CONCAT('%',#{name},'%')</if>
+			<if test="category != null and category !=''">and category like CONCAT('%',#{category},'%')</if>
+		</where>
+	</select>
+
+	<!-- 根据id查 -->
+	<select id="queryById" parameterType="int" resultMap="InventoryMap">
+		select * from Inventory where id=#{id}
+	</select>
+
+	<select id="queryByIdGoodsId" parameterType="int" resultMap="InventoryMap">
+		select i.* from Inventory i left join stock s
+		on i.stock_id = s.id
+		where s.goods_id=#{id}
+	</select>
+
+	<!-- 删除 -->
+	<delete id="delete" parameterType="int">
+        delete from Inventory where id in
+		<foreach collection="array" item="id" open="(" separator="," close=");">
+			#{id}
+		</foreach>
+    </delete>
+
+	<!-- 添加 -->
+	<insert id="add" parameterType="Inventory">
+        insert into Inventory values (null,#{stockId},#{name},#{category},#{quantity})
+    </insert>
+
+	<!-- 修改 -->
+	<update id="update" parameterType="Inventory">
+        update Inventory set quantity=#{quantity} where id = #{inventoryId}
+    </update>
+
+</mapper>

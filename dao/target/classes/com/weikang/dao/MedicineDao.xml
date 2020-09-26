@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.MedicineDao">
+
+    <resultMap id="MedicineMap" type="Medicine">
+        <result column="id" property="medicineId"></result>
+        <result column="inventory_id" property="inventoryId"></result>
+
+        <association property="inventory" javaType="Inventory"
+                     column="inventory_id" select="com.weikang.dao.InventoryDao.queryById"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+
+    <!-- 分页 -->
+    <select id="fenYe" parameterType="Medicine" resultMap="MedicineMap">
+        select * from Medicine
+        <where>
+            <if test="name != null and name!=''">and name like CONCAT('%',#{name},'%')</if>
+            <if test="category != null and category !=''">and category like CONCAT('%',#{category},'%')</if>
+        </where>
+    </select>
+
+    <!-- 条数 -->
+    <select id="fenYeCount" parameterType="Medicine" resultType="int">
+        select count(*) from Medicine
+        <where>
+            <if test="name != null and name!=''">and name like CONCAT('%',#{name},'%')</if>
+            <if test="category != null and category !=''">and category like CONCAT('%',#{category},'%')</if>
+        </where>
+    </select>
+
+
+
+    <!-- 根据id查 -->
+    <select id="queryById" parameterType="int" resultMap="MedicineMap">
+		select * from Medicine where id=#{id}
+	</select>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="int">
+        delete from Medicine where id in
+        <foreach collection="array" item="id" open="(" separator="," close=");">
+            #{id}
+        </foreach>
+
+    </delete>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="Medicine">
+        insert into Medicine values (null,#{inventoryId},#{name},#{category},#{price})
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="Medicine">
+        update Medicine set name=#{name},category=#{category},price=#{price} where id = #{medicineId}
+    </update>
+
+
+</mapper>

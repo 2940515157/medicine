@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.SellReportDao">
+
+    <resultMap id="SellReportMap" type="SellReport">
+        <result column="id" property="sellReportId"></result>
+        <result column="sell_id" property="sellId"></result>
+
+        <association property="sell" javaType="Sell"
+                     column="sell_id" select="com.weikang.dao.SellDao.queryById"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+
+    <!-- 分页 -->
+    <select id="fenYe" parameterType="SellReport" resultMap="SellReportMap">
+        select * from sell_report
+    </select>
+
+    <!-- 条数 -->
+    <select id="fenYeCount" parameterType="SellReport" resultType="int">
+        select count(*) from sell_report
+    </select>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="SellReport">
+        insert into sell_report values (null,#{sellId},#{time},#{sum});
+    </insert>
+
+
+</mapper>

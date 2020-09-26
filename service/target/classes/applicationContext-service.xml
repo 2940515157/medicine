@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+        <!-- spring  配置文件  -->
+        <context:component-scan base-package="com.weikang.service">
+        </context:component-scan>
+
+
+        <!--  事务-->
+        <!--配置事务控制管理器-->
+        <bean id="transactionManager"
+              class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+                <property name="dataSource" ref="druiddataSource"></property>
+        </bean>
+
+        <!-- 配置事务通知-->
+        <tx:advice id="targetAdvice" transaction-manager="transactionManager">
+                <tx:attributes>
+                        <tx:method name="insert*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+                        <tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+                        <tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+                        <tx:method name="query*" read-only="true"/>
+                </tx:attributes>
+        </tx:advice>
+
+        <!--配置事务的切入点 -->
+        <aop:config>
+                <aop:pointcut expression="within(com.weikang.service.impl.*)" id="targetPoint"/>
+                <aop:advisor advice-ref="targetAdvice" pointcut-ref="targetPoint"/>
+        </aop:config>
+
+</beans>

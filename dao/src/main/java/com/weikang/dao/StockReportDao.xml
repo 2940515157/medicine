@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weikang.dao.StockReportDao">
+
+    <resultMap id="StockReportMap" type="StockReport">
+        <result column="id" property="stockReportId"></result>
+        <result column="stock_id" property="stockId"></result>
+
+        <association property="stock" javaType="Stock"
+                     column="stock_id" select="com.weikang.dao.StockDao.queryById"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+
+    <!-- 分页 -->
+    <select id="fenYe" parameterType="StockReport" resultMap="StockReportMap">
+        select * from stock_report
+    </select>
+
+    <!-- 条数 -->
+    <select id="fenYeCount" parameterType="StockReport" resultType="int">
+        select count(*) from stock_report
+    </select>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="StockReport">
+        insert into stock_report values (null,#{stockId},#{time},#{sum});
+    </insert>
+
+
+</mapper>
